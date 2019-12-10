@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Alarm">
+	
+	<!-- 디스커션 전용기능이었음 -->
+	<select id="dNumAlarm" parameterType="java.lang.String" resultType="int">
+		select dNum from man_alarm where receiver=#{nickName}
+	</select>
+	<select id="dReNumAlarm" parameterType="java.lang.String" resultType="int">
+		select dReNum from man_alarm where receiver=#{nickName}
+	</select>
+	<select id="getMaxNumRe" resultType="int">
+		select max(dReNum) from man_disc_reply
+	</select>
+	<select id="getReceiver" parameterType="int" resultType="java.lang.String">
+		select nickName from man_disc_reply where dReNum=#{dReNum}
+	</select>
+	
+	
+	
+	
+	
+	<insert id="insertAlarm" parameterType="java.util.Map">
+		insert into man_alarm values(aNum.nextval, #{aCauseNum}, #{receiver}, #{aMsg})
+	</insert>
+	
+	<delete id="deleteAlarm" parameterType="int">
+		delete from man_alarm where aNum=#{aNum}
+	</delete>
+	
+	<select id="getAlarm" parameterType="java.lang.String" resultType="alarm.AlarmDataBean">
+		select * from man_alarm where receiver=#{nickName}
+	</select>
+	
+	<select id="countAlarm" parameterType="java.lang.String" resultType="int">
+		select count(*) from man_alarm where receiver=#{nickName}
+	</select>
+	
+</mapper>  	
+
+
+
+
+
+
+
+
+
+
+

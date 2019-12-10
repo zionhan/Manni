@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Prof">
+	<select id="checkUserDetail" resultType="int">
+		select count(*) from man_user_detail
+	</select>
+	<select id="getArticles" resultType="user.ManUserDetail">
+		select nickname, preferjob, prefercontent, ablepjt from man_user_detail
+	</select>
+	<select id="getUserDetail" parameterType="String" resultType="user.ManUserDetail">
+		select * from man_user_detail where nickname=#{nickName}
+	</select>
+</mapper>  	
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  	
+<mapper namespace="Market">
+	<select id="getMarketList" resultType="market.MarketDataBean">
+		SELECT * FROM man_market
+	</select>
+	
+	<select id="getReviewList" resultType="market.ReviewDataBean" parameterType="int">
+		SELECT * FROM man_market_review WHERE mNum=#{mNum}
+	</select>
+	
+	
+	<select id="getMarketDto" resultType="market.MarketDataBean" parameterType="int">
+		SELECT * FROM man_market WHERE mNum=#{mNum}
+	</select>
+   <select id="getBuyerList" resultType="market.BuyerDataBean" parameterType="String">
+      SELECT * FROM man_market_buyer WHERE buyer=#{nickName}
+   </select>
+
+	<update id="insertMarket" parameterType="market.MarketDataBean">
+		INSERT INTO man_market (
+			mNum, nickName, mTitle, mGuarantee, mContent, mDate
+		) VALUES (
+			mNum.NEXTVAL, #{nickName}, #{mTitle}, #{mGuarantee}, #{mContent}, SYSDATE
+		)		
+	</update>
+	
+	<update id="insertReview" parameterType="market.ReviewDataBean">
+      INSERT INTO man_market_review (
+			rNum, nickName, rComment, rDate, rScore, mNum
+		) VALUES (
+			rNum.NEXTVAL, #{nickName}, #{rComment}, SYSDATE, #{rScore}, #{mNum}
+		)		
+	</update>
+	
+	<update id="insertBuyer" parameterType="market.BuyerDataBean">
+		INSERT INTO man_market_buyer (
+			mBNum, buyer, seller, mCode, mBuyDate, mNum 
+		) VALUES (
+			mBNum.NEXTVAL, #{buyer}, #{seller}, 0, SYSDATE, #{mNum}
+		)		
+	</update>
+	
+	
+	<update id="updateMCode" parameterType="int">
+		UPDATE man_market_buyer SET mCode=1 where mBNum=#{mBNum}
+	</update>
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Vote">
+
+	<select id="getVoteUp" parameterType="int" resultType="int">
+		select count(*) from man_vote where vCauseNum=#{vCauseNum} and vote=1
+	</select>
+	<select id="getVoteDown" parameterType="int" resultType="int">
+		select count(*) from man_vote where vCauseNum=#{vCauseNum} and vote=-1
+	</select>
+	<insert id="setVoteCount" parameterType="java.util.Map">
+		insert into man_vote values(vNum.nextval, #{vCauseNum}, #{vote}, #{nickName})
+	</insert>
+	
+	<select id="getVoteLog" parameterType="java.util.Map" resultType="int">
+		select vote from man_vote where vCauseNum=#{vCauseNum} and nickName=#{nickName}
+	</select>
+
+	<delete id="deleteVoteOne" parameterType="java.util.Map">
+		delete from man_vote where vCauseNum=#{vCauseNum} and nickName=#{nickName}
+	</delete>
+	
+	<delete id="deleteVoteAll" parameterType="int">
+		delete from man_vote where vCauseNum=#{vCauseNum}
+	</delete>
+	
+</mapper>  	
+
+
+
+
+
+
+
+
+
+
+

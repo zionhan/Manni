@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="User">
+	<select id="checkId" parameterType="java.lang.String" resultType="int">
+		select count(*) from man_user_basic where id=#{id}
+	</select>
+	<select id="checkNickName" parameterType="java.lang.String" resultType="int">
+		select count(*) from man_user_basic where nickname=#{nickName}
+	</select>
+	<select id="getUser" parameterType="java.lang.String" resultType="user.ManUserBasic">
+		select * from man_user_basic where id=#{id}	
+	</select>
+	<select id="getUserDetail" parameterType="java.lang.String" resultType="user.ManUserDetail">
+		select * from man_user_detail where nickname=#{nickName}	
+	</select>
+	<select id="getUserNickName" parameterType="java.lang.String" resultType="java.lang.String">
+		select nickname from man_user_basic where id=#{id}
+	</select>
+	<insert id="insertUser" parameterType="user.ManUserBasic">
+		insert into man_user_basic (uNum, id, passwd, nickname, joindate, usergrade) values ( uNum.NEXTVAL, #{id}, #{passwd}, #{nickName}, #{joinDate}, #{userGrade})
+	</insert>
+	<delete id="deleteUser" parameterType="java.lang.String">
+		delete from man_user_basic where id=#{id}
+	</delete>
+	<update id="updateUser" parameterType="user.ManUserBasic">
+		update man_user_basic set passwd=#{passwd} where id=#{id}
+	</update>
+	<delete id="deleteUserDetail" parameterType="java.lang.String">
+		delete from man_user_detail where nickname=#{nickName}
+	</delete>
+	<insert id="insertUserDetail" parameterType="user.ManUserDetail">
+		insert into  man_user_detail (nickname, preferjob, prefercontent, age, gender, tel, resume, ablepjt) values (#{nickName}, #{preferJob}, #{preferContent}, #{age}, #{gender}, #{tel}, #{resume, jdbcType=VARCHAR}, #{ablePjt})
+	</insert>	
+	<update id="updateUserGrade" parameterType="user.ManUserBasic">
+		update man_user_basic set usergrade=#{userGrade}, upgradedate=#{upgradeDate} where nickname=#{nickName}
+	</update>
+	<select id="getUserJob" parameterType="java.lang.String" resultType="int">
+		select preferJob from man_user_detail where nickname=#{nickName}
+	</select>
+</mapper>  	
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Chat">
+
+	<insert id="insertChat" parameterType="chat.ChatDataBean">
+		insert into man_chat values(chNum.nextval, #{chCauseNum}, #{sender}, #{msg}, systimestamp)
+	</insert>
+
+	<select id="getChat" parameterType="int" resultType="chat.ChatDataBean">
+		select * from man_chat where chCauseNum=#{chCauseNum} order by chDate asc
+	</select>
+
+</mapper>  	
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- spring-servlet.xml -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/util
+						http://www.springframework.org/schema/util/spring-util-4.3.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">	
+				
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<context:component-scan base-package="vote"/>
+	<context:component-scan base-package="alarm"/>
+	<context:component-scan base-package="competition"/>
+	<context:component-scan base-package="configuration"/>
+	<context:component-scan base-package="discussion"/>
+	<context:component-scan base-package="profile"/>
+	<context:component-scan base-package="project"/>
+	<context:component-scan base-package="user"/>
+	
+	<context:component-scan base-package="file"/>
+	<context:component-scan base-package="market"/>
+	<context:component-scan base-package="chat"/>
+	<context:component-scan base-package="rank"/>
+
+
+	
+</beans>

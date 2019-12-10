@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Proj">	
+	<select id="getProjDto" parameterType="int" resultType="project.ProjDataBean">
+		SELECT * FROM man_proj WHERE pNum=#{pNum}
+	</select>	
+	
+	
+	<select id="getProjListByStNickName" parameterType="String" resultType="project.ProjDataBean">
+		SELECT * FROM man_proj WHERE stNickName=#{nickName}	
+	</select>
+	
+	<select id="getProjListByEdNickName" parameterType="String" resultType="project.ProjDataBean">
+		SELECT * FROM man_proj WHERE edNickName=#{nickName}	
+	</select>
+	
+	
+	
+	
+	
+	
+	<update id="insertProj" parameterType="project.ProjDataBean">		
+		INSERT INTO man_proj (
+			pNum, stNickName, edNickName,
+			pReward, pField, pEditStyle, pEditTime, pContent,
+			pSuggestDate, pExpireDate, pEndDate, pCode			
+		) VALUES (
+			pNum.NEXTVAL, #{stNickName}, #{edNickName},
+			#{pReward}, #{pField}, #{pEditStyle}, #{pEditTime}, #{pContent},
+			SYSDATE, SYSDATE+3, #{pEndDate}, #{pCode}
+		)
+	</update>	
+	
+	
+	<update id="updatePCode" parameterType="project.ProjDataBean">
+		UPDATE man_proj SET pCode=#{pCode}, pStartDate=SYSDATE WHERE pNum=#{pNum}
+	</update>
+	
+	<update id="updateProjRe" parameterType="project.ProjDataBean">
+		UPDATE man_proj SET editUrl=#{editUrl} WHERE pNum=#{pNum}
+	</update>
+	
+	
+	
+	
+	<update id="deleteProj" parameterType="int">
+		DELETE man_proj WHERE pNum=#{pNum}	
+	</update>
+	
+	<select id="getMaxProjNum" resultType="int">
+		select max(pNum) from man_proj
+	</select>
+	
+</mapper>  	
+
+
+
+
+
+
+
+
+
+
+

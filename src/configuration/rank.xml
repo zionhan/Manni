@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Rank">
+	<select id="checkManVote" resultType="int">
+		select count(*) from man_vote
+	</select>
+	<select id="getStreamerArticles" resultType="vote.VoteDataBean">
+		select 
+			nickname, 
+			sum(vote) vote 
+		from man_vote 
+		where nickname in ( select nickname from man_user_detail where preferjob = 0 ) 
+		group by nickname 
+		order by vote desc
+	</select>
+	<select id="getEditorArticles" resultType="vote.VoteDataBean">
+		select 
+			nickname, 
+			sum(vote) vote 
+		from man_vote 
+		where nickname in ( select nickname from man_user_detail where preferjob = 1 ) 
+		group by nickname 
+		order by vote desc
+	</select>
+</mapper>

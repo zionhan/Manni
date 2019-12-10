@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Comp">
+	<select id="getCompParCount" parameterType="int" resultType="int">
+		SELECT COUNT(*) FROM man_comp_participant WHERE cNum=#{cNum}		
+	</select>	
+	<select id="getCompReCount" parameterType="int" resultType="int">
+		SELECT COUNT(*) FROM man_comp_participant WHERE cNum=#{cNum} AND cReDate IS NOT NULL
+	</select>	
+	<select id="getCompStNickName" parameterType="int" resultType="String">
+		SELECT nickName FROM man_comp WHERE cNum=#{cNum}	
+	</select>	
+	<select id="isCReDate" parameterType="int" resultType="int">
+		SELECT NVL( COUNT(cReDate), 0 ) FROM man_comp_participant WHERE cReNum=#{cReNum}
+	</select>
+	
+	
+	
+	<select id="getComp" parameterType="int" resultType="competition.CompDataBean">
+		SELECT * FROM man_comp WHERE cNum=#{cNum}
+	</select>
+	
+	<select id="getCompPar" parameterType="int" resultType="competition.CompParDataBean">
+		SELECT * FROM man_comp_participant WHERE cReNum=#{cReNum}
+	</select>
+	
+
+	<select id="getCompListBasic" resultType="competition.CompDataBean">	
+		select 
+			c.cNum, 
+			c.cTitle, 
+			c.nickName, 
+			c.cStartDate, 
+			c.cEndDate, 
+			c.cReward,
+			c.pReward, 
+			c.cField, 
+			c.cEditStyle, 
+			c.cCode,
+			(select count(*) from man_comp_participant p where c.cNum=p.cNum) cParCnt
+		from man_comp c
+		order by c.cCode asc, c.cStartDate desc
+	</select>
+	
+	<select id="getCompListIng" resultType="competition.CompDataBean">	
+		select 
+			c.cNum, 
+			c.cTitle, 
+			c.nickName, 
+			c.cStartDate, 
+			c.cEndDate, 
+			c.cReward,
+			c.pReward, 
+			c.cField, 
+			c.cEditStyle, 
+			c.cCode,
+			(select count(*) from man_comp_participant p where c.cNum=p.cNum) cParCnt
+		from man_comp c where cCode=0
+		order by c.cStartDate DESC
+	</select>
+	
+	
+	<select id="getCompListEnd" resultType="competition.CompDataBean">	
+		select 
+			c.cNum, 
+			c.cTitle, 
+			c.nickName, 
+			c.cStartDate, 
+			c.cEndDate, 
+			c.cReward,
+			c.pReward, 
+			c.cField, 
+			c.cEditStyle, 
+			c.cCode,
+			(select count(*) from man_comp_participant p where c.cNum=p.cNum) cParCnt
+		from man_comp c where cCode=1
+		order by c.cStartDate DESC
+	</select>
+	
+	
+	<select id="getCompParList" parameterType="int" resultType="competition.CompParDataBean">
+		SELECT * FROM man_comp_participant WHERE cNum=#{cNum}
+	</select>	
+	<select id="getCompReList" parameterType="int" resultType="competition.CompParDataBean">
+		SELECT * FROM man_comp_participant WHERE cNum=#{cNum} AND cReDate IS NOT NULL
+	</select>	
+	
+	
+	<update id="insertComp" parameterType="competition.CompDataBean">
+		INSERT INTO man_comp (
+			cNum, cTitle, nickName, cStartDate, cEndDate, cExpireDate,
+			cReward, pReward,
+			cField, cEditStyle, cEditTime, cContent, cCode
+		) VALUES (
+			cNum.NEXTVAL, #{cTitle}, #{nickName}, SYSDATE, #{cEndDate}, #{cExpireDate}+3,
+			#{cReward}, #{pReward},
+			#{cField}, #{cEditStyle}, #{cEditTime}, #{cContent}, 0
+		)
+	</update>		
+	<update id="insertCompPar" parameterType="competition.CompParDataBean">
+		INSERT INTO man_comp_participant (
+			cReNum, nickName, cJoinDate, cNum
+		) VALUES (
+			cReNum.NEXTVAL, #{nickName}, SYSDATE, #{cNum}
+		)		
+	</update>	
+	<update id="updateCompRe" parameterType="competition.CompParDataBean">
+		UPDATE man_comp_participant SET 
+		cRedate=SYSDATE, editUrl=#{editUrl}, cComment=#{cComment},
+		editTool=#{editTool}, editPlugin=#{editPlugin}
+		WHERE cReNum=#{cReNum}
+	</update>	
+	<update id="updateCompEdNickName" parameterType="competition.CompParDataBean">
+		UPDATE man_comp SET cCode=1, edNickName=#{edNickName} WHERE cNum=#{cNum}
+	</update>
+	
+	<update id="updateCReLike" parameterType="java.util.Map">
+		UPDATE man_comp_participant SET cReLike=cReLike+#{update} WHERE cReNum=#{cReNum} 
+	</update>
+	
+	
+	
+	<update id="deleteCompPar" parameterType="int">
+		DELETE man_comp_participant WHERE cReNum=#{cReNum}
+	</update>
+	
+		
+		
+	<select id="getMaxCompNum" resultType="int">
+		select max(cNum) from man_comp
+	</select>
+	
+</mapper>  	
+
+
+
+
+
+
+
+
+
+
+

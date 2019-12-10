@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Disc">
+	
+	<select id="getArticlesByVote" parameterType="java.util.Map" resultType="discussion.DiscDataBean">
+		select 
+			y.*
+		from (
+			select
+				rownum as rnum,
+				x.*
+			from (
+					select 
+						d.dnum, 
+						d.nickname, 
+						d.dtitle,
+						d.dcontent, 
+						d.dfield, 
+						d.dwritedate, 
+						(select count(*) from man_disc_reply r where r.dnum=d.dnum) dcntreply, 
+						((select count(*) from man_vote v where v.vcausenum=d.dnum and vote=1) - (select count(*) from man_vote v where v.vcausenum=d.dnum and vote=-1)) dcntvote
+					from man_discussion d
+					order by dcntvote desc, d.dwritedate desc, dcntreply desc
+				) x
+		) y
+		where rnum between #{start} and #{end}
+	</select>
+	<select id="getArticlesByReply" parameterType="java.util.Map" resultType="discussion.DiscDataBean">
+		select 
+			y.*
+		from (
+			select
+				rownum as rnum,
+				x.*
+			from (
+					select 
+						d.dnum, 
+						d.nickname, 
+						d.dtitle,
+						d.dcontent, 
+						d.dfield, 
+						d.dwritedate, 
+						(select count(*) from man_disc_reply r where r.dnum=d.dnum) dcntreply, 
+						((select count(*) from man_vote v where v.vcausenum=d.dnum and vote=1) - (select count(*) from man_vote v where v.vcausenum=d.dnum and vote=-1)) dcntvote
+					from man_discussion d
+					order by dcntreply desc, d.dwritedate desc, dcntvote desc
+				) x
+		) y
+		where rnum between #{start} and #{end}
+	</select>
+	<select id="getArticlesByTime" parameterType="java.util.Map" resultType="discussion.DiscDataBean">
+		select 
+			y.*
+		from (
+			select
+				rownum as rnum,
+				x.*
+			from (
+					select 
+						d.dnum, 
+						d.nickname, 
+						d.dtitle,
+						d.dcontent, 
+						d.dfield, 
+						d.dwritedate, 
+						(select count(*) from man_disc_reply r where r.dnum=d.dnum) dcntreply, 
+						((select count(*) from man_vote v where v.vcausenum=d.dnum and vote=1) - (select count(*) from man_vote v where v.vcausenum=d.dnum and vote=-1)) dcntvote
+					from man_discussion d
+					order by d.dwritedate desc, dcntvote desc, dcntreply desc
+				) x
+		) y
+		where rnum between #{start} and #{end}
+	</select>
+	
+	<select id="getArticle" parameterType="int" resultType="discussion.DiscDataBean">
+		select * from man_discussion where dNum=#{dNum}
+	</select>
+	
+	<update id="insertArticle" parameterType="discussion.DiscDataBean">
+		insert into man_discussion values(dNum.nextval, #{nickName}, #{dTitle}, #{dContent}, #{dField}, systimestamp)
+	</update>
+	
+	<update id="updateArticle" parameterType="discussion.DiscDataBean">
+		update man_discussion set dTitle=#{dTitle}, dContent=#{dContent} where dNum=#{dNum}
+	</update>
+	
+	<delete id="deleteArticle" parameterType="int">
+		delete from man_discussion where dNum=#{dNum}
+	</delete>
+	
+	<select id="getMaxNum" resultType="int">
+		select max(dNum) from man_discussion
+	</select>
+	
+	<select id="getNewReGroup" parameterType="int" resultType="int">
+		select max(dReGroup) from man_disc_reply where dNum=#{dNum}
+	</select>
+	<select id="getParentReGroup" parameterType="int" resultType="int">
+		select dReGroup from man_disc_reply where dReNum=#{dReParent}
+	</select>
+	<select id="getParentReSeq" parameterType="int" resultType="int">
+		select dReSeq from man_disc_reply where dReNum=#{dReParent}
+	</select>
+	<select id="getParentReDepth" parameterType="int" resultType="int">
+		select dReDepth from man_disc_reply where dReNum=#{dReParent}
+	</select>
+	<select id="getMaxSeq" parameterType="java.util.Map" resultType="int">
+		select max(dReSeq) from man_disc_reply where dNum=#{dNum} and dReGroup=#{dReGroup} and dReDepth=#{myDepth}
+	</select>
+	<update id="pushReSeq" parameterType="java.util.Map">
+		update man_disc_reply set dReSeq=dReSeq+1 where dNum=#{dNum} and dReGroup=#{dReGroup} and dReSeq&gt;=#{targetSeq}
+	</update>
+	<update id="pullReSeq" parameterType="java.util.Map">
+		update man_disc_reply set dReSeq=dReSeq-1 where dNum=#{dNum} and dReGroup=#{dReGroup} and dReSeq&gt;=#{targetSeq}
+	</update>
+
+	<update id="insertReply" parameterType="discussion.DiscReDataBean">
+		insert into man_disc_reply values(#{dNum}, dReNum.nextval, #{dReParent}, #{dReGroup}, #{dReSeq}, #{dReDepth}, #{dReBlind}, #{nickName}, #{dReply}, systimestamp)
+	</update>
+	<select id="getReChildren" parameterType="int" resultType="int">
+		select count(*) from man_disc_reply where dReParent=#{dReNum}
+	</select>
+	<select id="getReParent" parameterType="int" resultType="int">
+		select dReParent from man_disc_reply where dReNum=#{dReNum}
+	</select>
+	<update id="setBlind" parameterType="int">
+		update man_disc_reply set dReBlind=1 where dReNum=#{dReNum}
+	</update>
+	<select id="getBlind" parameterType="int" resultType="int">
+		select dReBlind from man_disc_reply where dReNum=#{dReParent}
+	</select>
+	<delete id="deleteReply" parameterType="int">
+		delete from man_disc_reply where dReNum=#{dReNum}
+	</delete>
+	
+<!-- 	<select id="getReplies" parameterType="int" resultType="discussion.DiscReDataBean">
+		select * from man_disc_reply where dNum=#{dNum} order by dReGroup asc, dReSeq asc
+	</select> -->
+	<select id="getReplies" parameterType="int" resultType="discussion.DiscReDataBean">
+		select 
+			r.dnum, 
+			r.drenum, 
+			r.dreparent, 
+			r.dregroup, 
+			r.dreseq, 
+			r.dredepth,
+			r.dreblind, 
+			r.nickname, 
+			r.dreply, 
+			r.drewritedate, 
+			((select count(*) from man_vote v where v.vcausenum=r.dnum and vote=1) - (select count(*) from man_vote v where v.vcausenum=r.dnum and vote=-1)) dcntvote 
+		from man_disc_reply r 
+		where r.dnum=#{dNum} 
+		order by r.dReGroup asc, r.dReSeq asc
+	</select>
+	
+	<select id="getReCount" parameterType="int" resultType="int">
+		select count(*) from man_disc_reply where dNum=#{dNum}
+	</select>
+	
+	<select id="getRepliesByBoard" parameterType="int" resultType="int">
+		select dReNum from man_disc_reply where dNum=#{dNum}
+	</select>
+	
+	
+	<select id="searchArticlesByBoardTitle" parameterType="java.util.Map" resultType="discussion.DiscDataBean">
+		select 
+			y.*
+		from (
+			select
+				rownum as rnum,
+				x.*
+			from (
+				select 
+					* 
+				from man_discussion 
+				where dTitle like '%'||#{searchText}||'%'
+				and dWriteDate between to_date(#{now}, 'YYYYMMDDHH24MISS')-#{searchTime} and to_date(#{now}, 'YYYYMMDDHH24MISS')
+				order by dWriteDate desc
+			) x
+		) y
+		where rnum between #{start} and #{end}
+	</select>
+	<select id="searchArticlesByBoardContent" parameterType="java.util.Map" resultType="discussion.DiscDataBean">
+		select 
+			y.*
+		from (
+			select
+				rownum as rnum,
+				x.*
+			from (
+				select 
+					* 
+				from man_discussion 
+				where dContent like '%'||#{searchText}||'%'
+				and dWriteDate between to_date(#{now}, 'YYYYMMDDHH24MISS')-#{searchTime} and to_date(#{now}, 'YYYYMMDDHH24MISS')
+				order by dWriteDate desc
+			) x
+		) y
+		where rnum between #{start} and #{end}
+	
+	</select>
+	<select id="searchArticlesByBoardWriter" parameterType="java.util.Map" resultType="discussion.DiscDataBean">
+		select 
+			y.*
+		from (
+			select
+				rownum as rnum,
+				x.*
+			from (
+				select 
+					* 
+				from man_discussion 
+				where nickName like '%'||#{searchText}||'%'
+				and dWriteDate between to_date(#{now}, 'YYYYMMDDHH24MISS')-#{searchTime} and to_date(#{now}, 'YYYYMMDDHH24MISS')
+				order by dWriteDate desc
+			) x
+		) y
+		where rnum between #{start} and #{end}
+	</select>
+	<select id="searchArticlesByReplyContent" parameterType="java.util.Map" resultType="discussion.DiscDataBean">
+		select 
+			y.*
+		from (
+			select
+				rownum as rnum,
+				x.*
+			from(
+				select d.dNum, d.nickName, d.dTitle, d.dContent, d.dField, d.dWriteDate 
+				from (select distinct dnum from man_disc_reply where dReply like '%'||#{searchText}||'%') r
+				join man_discussion d
+				on d.dNum = r.dNum
+				where dWriteDate between to_date(#{now}, 'YYYYMMDDHH24MISS')-#{searchTime} and to_date(#{now}, 'YYYYMMDDHH24MISS')
+				order by dWriteDate desc
+			) x
+		) y
+		where rnum between #{start} and #{end}
+	</select>
+	<select id="searchArticlesByReplyWriter" parameterType="java.util.Map" resultType="discussion.DiscDataBean">
+		select 
+			y.*
+		from (
+			select
+				rownum as rnum,
+				x.*
+			from(
+				select d.dNum, d.nickName, d.dTitle, d.dContent, d.dField, d.dWriteDate 
+				from (select distinct dnum from man_disc_reply where nickName like '%'||#{searchText}||'%') r
+				join man_discussion d
+				on d.dNum = r.dNum
+				where dWriteDate between to_date(#{now}, 'YYYYMMDDHH24MISS')-#{searchTime} and to_date(#{now}, 'YYYYMMDDHH24MISS')
+				order by dWriteDate desc
+			) x
+		) y
+		where rnum between #{start} and #{end}
+	</select>
+	
+	
+	
+	
+</mapper>  	
+
+
+
+
+
+
+
+
+
+
+
